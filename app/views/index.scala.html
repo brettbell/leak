@@ -1,0 +1,38 @@
+@(message: String)
+
+<!DOCTYPE html>
+
+<html>
+    <head>
+        <title>leak</title>
+        <link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/main.css")">
+        <link rel="shortcut icon" type="image/png" href="@routes.Assets.at("images/favicon.png")">
+        <script src="@routes.Assets.at("javascripts/jquery-1.9.0.min.js")" type="text/javascript"></script>
+    </head>
+    <body>
+         <div id="msg"></div>
+         <script type="text/javascript">                   
+            var WS = window['MozWebSocket'] ? MozWebSocket : WebSocket
+            var statusSocket = new WS("ws://localhost:9000/status")                        
+            
+            statusSocket.onopen = function() {  
+               console.log("status socket has been opened!" + statusSocket.readyState);  
+               var msgdiv = document.getElementById('msg');
+               msgdiv.innerHTML="Test in progress"
+            } 
+            
+            statusSocket.onclose = function() {  
+               console.log("status socket has been closed!" + statusSocket.readyState);
+               var msgdiv = document.getElementById('msg');
+               msgdiv.innerHTML="Test stopped"  
+            } 
+            
+            statusSocket.onmessage = function(event) {                                            
+               var status = event.data
+               var msgdiv = document.getElementById('msg');
+               msgdiv.innerHTML=status
+               //console.log(status)               
+            }
+         </script>  
+    </body>
+</html>
